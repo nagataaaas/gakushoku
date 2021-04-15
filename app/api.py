@@ -8,7 +8,7 @@ from typing import List, Dict
 from fastapi import Depends, Query
 from fastapi import FastAPI, HTTPException, BackgroundTasks
 from fastapi.encoders import jsonable_encoder
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 from starlette.requests import Request
@@ -29,6 +29,15 @@ app = FastAPI(
 )
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
+@app.middleware("http")
+async def add_process_time_header(request: Request, call_next):
+    print(request.url)
+    if not request.url.is_secure:
+        if request.url.scheme == 'http':
+            return RedirectResponse(url=str(request.url).replace('http', 'https', 1))
+        elif request.url.scheme == 'ws':
+            return RedirectResponse(url=str(request.url).replace('ws', 'wss', 1))
+    return await call_next(request)
 
 @app.get('/', response_class=HTMLResponse)
 async def index(req: Request):
