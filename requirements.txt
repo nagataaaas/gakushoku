@@ -1,0 +1,10 @@
+fastapi==0.63.0
+SQLAlchemy==1.4.7
+SQLAlchemy-Utils==0.37.0
+aiofiles
+websockets
+pyjwt
+cryptography
+uvicorn
+websocket-client
+pytest
