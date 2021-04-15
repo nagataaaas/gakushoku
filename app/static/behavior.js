@@ -674,7 +674,7 @@ const app = new Vue({
         })
 
         const url = new URL(window.location);
-        if (location.protocol === 'https') {
+        if (location.protocol.startsWith('https')) {
             this.socket = new WebSocket(`wss://${url.hostname}:${url.port}/api/v1/ws`);
         } else {
             this.socket = new WebSocket(`ws://${url.hostname}:${url.port}/api/v1/ws`);
