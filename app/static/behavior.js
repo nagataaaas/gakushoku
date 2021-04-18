@@ -646,6 +646,7 @@ const app = new Vue({
         needWalkThrough: false,
         walkThroughIndex: 0,
         walkThroughIndexMax: 6,
+        getNext: null
     },
     mounted: function () {
         const isTourEnded = () => {
@@ -789,19 +790,18 @@ const app = new Vue({
             }
         },
         nextWalkThrough() {
+            this.getNext = new Date()
             this.walkThroughIndex++
             if (this.walkThroughIndex >= this.walkThroughIndexMax) {
                 this.needWalkThrough = false
                 document.cookie = 'tour=end'
             }
         },
-        skipWalkThrough() {
+        previousWalkThrough() {
             this.walkThroughIndex--
         }
     },
     updated: function () {
-
-
         this.setTourEnded()
     }
 })

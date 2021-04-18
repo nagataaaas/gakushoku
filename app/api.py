@@ -1,4 +1,5 @@
 import sys
+
 sys.path.append('./')
 
 import datetime
@@ -14,7 +15,7 @@ from sqlalchemy.orm import Session
 from starlette.requests import Request
 from starlette.websockets import WebSocket
 
-from app.config import HTML_DIR
+from app.config import HTML_DIR, IS_LOCAL
 from app.controller import all_permanent, get_special, is_valid_menu_id, set_sold_out, get_likes_by_sub, like_this, \
     dislike_this, get_congestion, set_congestion
 from app.model import get_db
@@ -29,15 +30,16 @@ app = FastAPI(
 )
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
+
 @app.middleware("http")
 async def add_process_time_header(request: Request, call_next):
-    print(request.url)
-    if not request.url.is_secure:
+    if not request.url.is_secure and not IS_LOCAL:
         if request.url.scheme == 'http':
             return RedirectResponse(url=str(request.url).replace('http', 'https', 1))
         elif request.url.scheme == 'ws':
             return RedirectResponse(url=str(request.url).replace('ws', 'wss', 1))
     return await call_next(request)
+
 
 @app.get('/', response_class=HTMLResponse)
 async def index(req: Request):

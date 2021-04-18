@@ -11,3 +11,5 @@ google_client_secret = os.getenv('GOOGLE_CLIENT_SECRET')
 
 MAX_SOLD_OUT_POST_PER_DAY = 10
 MAX_CONGESTION_POST_PER_DAY = 10
+
+IS_LOCAL = os.path.exists('.idea')
