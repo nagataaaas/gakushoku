@@ -1,3 +1,7 @@
+html {
+    touch-action: manipulation;
+}
+
 .main-wrapper {
     width: 100vw;
     height: 100vh;
@@ -181,13 +185,6 @@
     z-index: 2000;
 }
 
-#walk-through-container {
-    height: 100vh;
-    width: 100vw;
-    position: absolute;
-    top: 0;
-}
-
 #walk-through-background {
     height: 100vh;
     width: 100vw;
@@ -199,10 +196,12 @@
 }
 
 .walk-through {
-    height: 83vh;
+    height: 92vh;
     width: 80vw !important;
     z-index: 2002;
-    margin: 5vh 10vw 17vh 10vw !important;
+    margin: 4vh 10vw 4vh 10vw !important;
+    position: fixed !important;
+    top: 0;
 }
 
 .walk-through-image {
@@ -233,6 +232,6 @@
     border-top: none !important;
 }
 
-.walk-through{
+.walk-through {
     transition: opacity 1s;
 }

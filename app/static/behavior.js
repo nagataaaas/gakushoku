@@ -658,7 +658,12 @@ const app = new Vue({
             this.needWalkThrough = !isTourEnded()
             if (this.needWalkThrough) {
                 let elem = document.getElementById('walk-through-container')
-                if (elem !== null) elem.style.display = 'block'
+                if (elem !== null) {
+                    elem.style.display = 'block'
+                    $(elem).on('touchmove.noScroll', function (e) {
+                        e.preventDefault();
+                    });
+                }
             }
         }
 

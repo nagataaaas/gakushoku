@@ -3,20 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <title>明石高専学食システム</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.2/css/bulma.min.css">
     <link rel="stylesheet" href="/static/style.css">
     <meta name="google-signin-client_id"
           content="1046681300300-2sh30nts0u505ustbjdso43p5gaaph7t.apps.googleusercontent.com">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"
-            integrity="sha256-R4pqcOYV8lt7snxMQO/HSbVCFRPMdrhAFMH+vr9giYI=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
             integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ=="
             crossorigin="anonymous"></script>
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css" data-viewport-units-buggyfill="ignore">
+    <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js" data-viewport-units-buggyfill="ignore"></script>
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/viewport-units-buggyfill/0.6.2/viewport-units-buggyfill.min.js"
+            integrity="sha512-qRrO55DGKduNzya1hYix8wZlsr5uZm97ot9BpuTG749ZihUsNmONj06mJSgmB9fWeL9J1psCtW7X7jFAHX1XQw=="
+            crossorigin="anonymous"></script>
+    <script>window.viewportUnitsBuggyfill.init();</script>
 </head>
 <body>
 
@@ -24,189 +25,189 @@
     <div id="walk-through-container" v-if="needWalkThrough" style="display: none">
         <div id="walk-through-background"></div>
 
-            <div id="flick_special" class="ui card walk-through"v-if="walkThroughIndex===0">
-                <div class="content">
-                    <div class="header">Aメニュー・Bメニュー</div>
-                </div>
-                <div class="image">
-                    <img src="/static/images/walk-through/flick.png" class="walk-through-image">
-                </div>
-                <div class="content">
-                    <h4 class="ui sub header">ページング</h4>
-                    <div class="ui small feed">
-                        <div class="event">
-                            <div class="content">
-                                <div class="summary">
-                                    メニューを左右にフリックすることで、前日あるいは翌日のメニューを閲覧することができます。
-                                </div>
+        <div id="flick_special" class="ui card walk-through" v-if="walkThroughIndex===0">
+            <div class="content">
+                <div class="header">Aメニュー・Bメニュー</div>
+            </div>
+            <div class="image">
+                <img src="/static/images/walk-through/flick.png" class="walk-through-image">
+            </div>
+            <div class="content">
+                <h4 class="ui sub header">ページング</h4>
+                <div class="ui small feed">
+                    <div class="event">
+                        <div class="content">
+                            <div class="summary">
+                                メニューを左右にフリックすることで、前日あるいは翌日のメニューを閲覧することができます。
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="text-center">
-                    <template v-for="i in walkThroughIndexMax">
-                        <i class="circle outline icon" v-if="walkThroughIndex != i-1"></i>
-                        <i class="circle icon" v-if="walkThroughIndex === i-1"></i>
-                    </template>
-                </div>
-                <div class="extra content no-top-border">
-                    <div class="fluid ui buttons center">
-                        <button class="ui button disabled" v-on:click="previousWalkThrough()">BACK</button>
-                        <div class="or"></div>
-                        <button class="ui positive button" v-on:click="nextWalkThrough()">NEXT</button>
-                    </div>
+            </div>
+            <div class="text-center">
+                <template v-for="i in walkThroughIndexMax">
+                    <i class="circle outline icon" v-if="walkThroughIndex != i-1"></i>
+                    <i class="circle icon" v-if="walkThroughIndex === i-1"></i>
+                </template>
+            </div>
+            <div class="extra content no-top-border">
+                <div class="fluid ui buttons center">
+                    <button class="ui button disabled" v-on:click="previousWalkThrough()">BACK</button>
+                    <div class="or"></div>
+                    <button class="ui positive button" v-on:click="nextWalkThrough()">NEXT</button>
                 </div>
             </div>
+        </div>
 
-            <div id="turn_special" class="ui card walk-through"v-if="walkThroughIndex===1">
-                <div class="content">
-                    <div class="header">Aメニュー・Bメニュー</div>
-                </div>
-                <div class="image">
-                    <img src="/static/images/walk-through/turn.png" class="walk-through-image">
-                </div>
-                <div class="content">
-                    <h4 class="ui sub header">売り切れ設定</h4>
-                    <div class="ui small feed">
-                        <div class="event">
-                            <div class="content">
-                                <div class="summary">
-                                    <i class="red close icon"></i>をタッチして「売り切れ」に<br>
-                                    <i class="teal check icon"></i>をタッチして「販売中」に切り替えられます。<br>
-                                    これは全ユーザーに対してリアルタイムに反映されるため、慎重にご利用ください。<br>(※設定にはGoogleログインが必要です)
-                                </div>
+        <div id="turn_special" class="ui card walk-through" v-if="walkThroughIndex===1">
+            <div class="content">
+                <div class="header">Aメニュー・Bメニュー</div>
+            </div>
+            <div class="image">
+                <img src="/static/images/walk-through/turn.png" class="walk-through-image">
+            </div>
+            <div class="content">
+                <h4 class="ui sub header">売り切れ設定</h4>
+                <div class="ui small feed">
+                    <div class="event">
+                        <div class="content">
+                            <div class="summary">
+                                <i class="red close icon"></i>をタッチして「売り切れ」に<br>
+                                <i class="teal check icon"></i>をタッチして「販売中」に切り替えられます。<br>
+                                これは全ユーザーに対してリアルタイムに反映されるため、慎重にご利用ください。<br>(※設定にはGoogleログインが必要です)
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="text-center">
-                    <template v-for="i in walkThroughIndexMax">
-                        <i class="circle outline icon" v-if="walkThroughIndex != i-1"></i>
-                        <i class="circle icon" v-if="walkThroughIndex === i-1"></i>
-                    </template>
-                </div>
-                <div class="extra content no-top-border">
-                    <div class="fluid ui buttons center">
-                        <button class="ui button" v-on:click="previousWalkThrough()">BACK</button>
-                        <div class="or"></div>
-                        <button class="ui positive button" v-on:click="nextWalkThrough()">NEXT</button>
-                    </div>
+            </div>
+            <div class="text-center">
+                <template v-for="i in walkThroughIndexMax">
+                    <i class="circle outline icon" v-if="walkThroughIndex != i-1"></i>
+                    <i class="circle icon" v-if="walkThroughIndex === i-1"></i>
+                </template>
+            </div>
+            <div class="extra content no-top-border">
+                <div class="fluid ui buttons center">
+                    <button class="ui button" v-on:click="previousWalkThrough()">BACK</button>
+                    <div class="or"></div>
+                    <button class="ui positive button" v-on:click="nextWalkThrough()">NEXT</button>
                 </div>
             </div>
+        </div>
 
-            <div id="turn_like_special" class="ui card walk-through"v-if="walkThroughIndex===2">
-                <div class="content">
-                    <div class="header">Aメニュー・Bメニュー</div>
-                </div>
-                <div class="image">
-                    <img src="/static/images/walk-through/turn_like.png" class="walk-through-image">
-                </div>
-                <div class="content">
-                    <h4 class="ui sub header">スキ</h4>
-                    <div class="ui small feed">
-                        <div class="event">
-                            <div class="content">
-                                <div class="summary">
-                                    <div class="mini ui button"><i class="heart icon"></i> スキ</div>
-                                    をタッチして「スキ」に設定<br>
-                                    <div class="mini ui red button"><i class="heart icon"></i> スキ</div>
-                                    をタッチして「スキ」をキャンセルできます<br>
-                                    すべてのユーザーは、それぞれの料理がどれだけの人数から「スキ」に設定されているかを見ることができます。<br>(※設定にはGoogleログインが必要です)
-                                </div>
+        <div id="turn_like_special" class="ui card walk-through" v-if="walkThroughIndex===2">
+            <div class="content">
+                <div class="header">Aメニュー・Bメニュー</div>
+            </div>
+            <div class="image">
+                <img src="/static/images/walk-through/turn_like.png" class="walk-through-image">
+            </div>
+            <div class="content">
+                <h4 class="ui sub header">スキ</h4>
+                <div class="ui small feed">
+                    <div class="event">
+                        <div class="content">
+                            <div class="summary">
+                                <div class="mini ui button"><i class="heart icon"></i> スキ</div>
+                                をタッチして「スキ」に設定<br>
+                                <div class="mini ui red button"><i class="heart icon"></i> スキ</div>
+                                をタッチして「スキ」をキャンセルできます<br>
+                                すべてのユーザーは、それぞれの料理がどれだけの人数から「スキ」に設定されているかを見ることができます。<br>(※設定にはGoogleログインが必要です)
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="text-center">
-                    <template v-for="i in walkThroughIndexMax">
-                        <i class="circle outline icon" v-if="walkThroughIndex != i-1"></i>
-                        <i class="circle icon" v-if="walkThroughIndex === i-1"></i>
-                    </template>
-                </div>
-                <div class="extra content no-top-border">
-                    <div class="fluid ui buttons center">
-                        <button class="ui button" v-on:click="previousWalkThrough()">BACK</button>
-                        <div class="or"></div>
-                        <button class="ui positive button" v-on:click="nextWalkThrough()">NEXT</button>
-                    </div>
+            </div>
+            <div class="text-center">
+                <template v-for="i in walkThroughIndexMax">
+                    <i class="circle outline icon" v-if="walkThroughIndex != i-1"></i>
+                    <i class="circle icon" v-if="walkThroughIndex === i-1"></i>
+                </template>
+            </div>
+            <div class="extra content no-top-border">
+                <div class="fluid ui buttons center">
+                    <button class="ui button" v-on:click="previousWalkThrough()">BACK</button>
+                    <div class="or"></div>
+                    <button class="ui positive button" v-on:click="nextWalkThrough()">NEXT</button>
                 </div>
             </div>
+        </div>
 
-            <div id="permanent" class="ui card walk-through"v-if="walkThroughIndex===3">
-                <div class="content">
-                    <div class="header">恒常メニュー</div>
-                </div>
-                <div class="image">
-                    <img src="/static/images/walk-through/permanent.png" class="walk-through-image">
-                </div>
-                <div class="content">
-                    <h4 class="ui sub header">情報設定</h4>
-                    <div class="ui small feed">
-                        <div class="event">
-                            <div class="content">
-                                <div class="summary">
-                                    恒常メニューに関しても、Aメニュー・Bメニュー同様設定することが可能です。<br>(※設定にはGoogleログインが必要です)
-                                </div>
+        <div id="permanent" class="ui card walk-through" v-if="walkThroughIndex===3">
+            <div class="content">
+                <div class="header">恒常メニュー</div>
+            </div>
+            <div class="image">
+                <img src="/static/images/walk-through/permanent.png" class="walk-through-image">
+            </div>
+            <div class="content">
+                <h4 class="ui sub header">情報設定</h4>
+                <div class="ui small feed">
+                    <div class="event">
+                        <div class="content">
+                            <div class="summary">
+                                恒常メニューに関しても、Aメニュー・Bメニュー同様設定することが可能です。<br>(※設定にはGoogleログインが必要です)
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="text-center">
-                    <template v-for="i in walkThroughIndexMax">
-                        <i class="circle outline icon" v-if="walkThroughIndex != i-1"></i>
-                        <i class="circle icon" v-if="walkThroughIndex === i-1"></i>
-                    </template>
-                </div>
-                <div class="extra content no-top-border">
-                    <div class="fluid ui buttons center">
-                        <button class="ui button" v-on:click="previousWalkThrough()">BACK</button>
-                        <div class="or"></div>
-                        <button class="ui positive button" v-on:click="nextWalkThrough()">NEXT</button>
-                    </div>
+            </div>
+            <div class="text-center">
+                <template v-for="i in walkThroughIndexMax">
+                    <i class="circle outline icon" v-if="walkThroughIndex != i-1"></i>
+                    <i class="circle icon" v-if="walkThroughIndex === i-1"></i>
+                </template>
+            </div>
+            <div class="extra content no-top-border">
+                <div class="fluid ui buttons center">
+                    <button class="ui button" v-on:click="previousWalkThrough()">BACK</button>
+                    <div class="or"></div>
+                    <button class="ui positive button" v-on:click="nextWalkThrough()">NEXT</button>
                 </div>
             </div>
+        </div>
 
-            <div id="congestion" class="ui card walk-through"v-if="walkThroughIndex===4">
-                <div class="content">
-                    <div class="header">混雑度</div>
-                </div>
-                <div class="image">
-                    <img src="/static/images/walk-through/congestion.png" class="walk-through-image">
-                </div>
-                <div class="content">
-                    <h4 class="ui sub header">情報設定</h4>
-                    <div class="ui small feed">
-                        <div class="event">
-                            <div class="content">
-                                <div class="summary">
-                                    ページ上部に現在の混雑度を示すアイコンが表示されています。<br>
-                                    混雑度は3種類あり、それぞれ<br>
-                                    <img src="/static/images/vacant.svg" class="walk-through-icon">: ほとんど空いています<br>
-                                    <img src="/static/images/middle.svg" class="walk-through-icon">: 少し混んでいます<br>
-                                    <img src="/static/images/congestion.svg" class="walk-through-icon">: 非常に混んでいます<br>
-                                    であり、アイコンをタッチすることで混雑度を設定することができます。<br>
-                                    (※設定にはGoogleログインが必要です)
-                                </div>
+        <div id="congestion" class="ui card walk-through" v-if="walkThroughIndex===4">
+            <div class="content">
+                <div class="header">混雑度</div>
+            </div>
+            <div class="image">
+                <img src="/static/images/walk-through/congestion.png" class="walk-through-image">
+            </div>
+            <div class="content">
+                <h4 class="ui sub header">情報設定</h4>
+                <div class="ui small feed">
+                    <div class="event">
+                        <div class="content">
+                            <div class="summary">
+                                ページ上部に現在の混雑度を示すアイコンが表示されています。<br>
+                                混雑度は3種類あり、それぞれ<br>
+                                <img src="/static/images/vacant.svg" class="walk-through-icon">: ほとんど空いています<br>
+                                <img src="/static/images/middle.svg" class="walk-through-icon">: 少し混んでいます<br>
+                                <img src="/static/images/congestion.svg" class="walk-through-icon">: 非常に混んでいます<br>
+                                であり、アイコンをタッチすることで混雑度を設定することができます。<br>
+                                (※設定にはGoogleログインが必要です)
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="text-center">
-                    <template v-for="i in walkThroughIndexMax">
-                        <i class="circle outline icon" v-if="walkThroughIndex != i-1"></i>
-                        <i class="circle icon" v-if="walkThroughIndex === i-1"></i>
-                    </template>
-                </div>
-                <div class="extra content no-top-border">
-                    <div class="fluid ui buttons center">
-                        <button class="ui button" v-on:click="previousWalkThrough()">BACK</button>
-                        <div class="or"></div>
-                        <button class="ui positive button" v-on:click="nextWalkThrough()">NEXT</button>
-                    </div>
+            </div>
+            <div class="text-center">
+                <template v-for="i in walkThroughIndexMax">
+                    <i class="circle outline icon" v-if="walkThroughIndex != i-1"></i>
+                    <i class="circle icon" v-if="walkThroughIndex === i-1"></i>
+                </template>
+            </div>
+            <div class="extra content no-top-border">
+                <div class="fluid ui buttons center">
+                    <button class="ui button" v-on:click="previousWalkThrough()">BACK</button>
+                    <div class="or"></div>
+                    <button class="ui positive button" v-on:click="nextWalkThrough()">NEXT</button>
                 </div>
             </div>
+        </div>
 
-        <div id="list" class="ui card walk-through"v-if="walkThroughIndex===5">
+        <div id="list" class="ui card walk-through" v-if="walkThroughIndex===5">
             <div class="content">
                 <div class="header">一覧表示</div>
             </div>
