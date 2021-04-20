@@ -409,8 +409,7 @@ Vue.component('special-menus', {
             special_wrapper.style.overflowX = 'hidden'
         }
         special_wrapper.ontouchend = (e) => {
-            if (Math.abs(e.changedTouches[0].screenX - touch_start_x) > window.innerWidth / 8 &&
-                Math.abs(e.changedTouches[0].screenY - touch_start_y) < window.innerHeight / 8) {
+            if (Math.abs(e.changedTouches[0].screenX - touch_start_x) > Math.abs(e.changedTouches[0].screenY - touch_start_y)) {
                 is_flicked = true
                 flick_direction = e.changedTouches[0].screenX > touch_start_x ? 'right' : 'left'
             }
