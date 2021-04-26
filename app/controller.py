@@ -1,7 +1,7 @@
 import sys
 sys.path.append('./')
 
-from typing import List
+from typing import List, Tuple
 from app.model import Menu, Schedule, SoldOut, Like, Congestion
 from app.scheme import MenuModel, NutritionModel, ScheduleModel, DayMenuModel, PermanentModel
 
@@ -18,7 +18,7 @@ def all_permanent(db: Session) -> PermanentModel:
 
     inner_sold_out = aliased(SoldOut)
     like_query = db.query(Like.menu, func.count(Like.id).label('like_count')).group_by(Like.menu).subquery()
-    data: list[tuple[Menu, SoldOut, int]] = db.query(Menu, SoldOut, like_query.c.like_count) \
+    data: List[Tuple[Menu, SoldOut, int]] = db.query(Menu, SoldOut, like_query.c.like_count) \
         .outerjoin(like_query, Menu.id == like_query.c.menu) \
         .outerjoin(SoldOut, Menu.id == SoldOut.menu) \
         .group_by(Menu.id) \
@@ -39,7 +39,7 @@ def all_permanent(db: Session) -> PermanentModel:
     return PermanentModel(menus=result)
 
 
-def get_special(dates: list[datetime.date], db: Session) -> ScheduleModel:
+def get_special(dates: List[datetime.date], db: Session) -> ScheduleModel:
     result = ScheduleModel(schedules=[])
 
     schedules = db.query(Schedule).filter(Schedule.date.in_(dates)).all()
@@ -104,7 +104,7 @@ def is_valid_menu_id(menu_id: str, db: Session) -> bool:
 def get_menu(menu_id: str, db: Session) -> MenuModel or None:
     inner_sold_out = aliased(SoldOut)
     like_query = db.query(Like.menu, func.count(Like.id).label('like_count')).group_by(Like.menu).subquery()
-    data: list[tuple[Menu, SoldOut, int]] = db.query(Menu, SoldOut, like_query.c.like_count) \
+    data: List[Tuple[Menu, SoldOut, int]] = db.query(Menu, SoldOut, like_query.c.like_count) \
         .outerjoin(like_query, Menu.id == like_query.c.menu) \
         .outerjoin(SoldOut, Menu.id == SoldOut.menu) \
         .group_by(Menu.id) \
