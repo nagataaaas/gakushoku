@@ -235,3 +235,7 @@ html {
 .walk-through {
     transition: opacity 1s;
 }
+
+.hidden{
+    display: none !important;
+}

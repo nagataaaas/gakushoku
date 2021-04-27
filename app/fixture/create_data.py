@@ -1,10 +1,6 @@
 import json
 import datetime
-import re
 import random
-
-num_regex = re.compile('[\d\.]+')
-
 
 def special_menu():
     menu = {}

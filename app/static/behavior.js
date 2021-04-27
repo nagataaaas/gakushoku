@@ -670,9 +670,10 @@ const app = new Vue({
             initGoogleAuth()
             if (isGoogleSignedIn()) {
                 this.mailAddress = getEmail()
-                this.isLoggedIn = true
                 this.name = getName()
+                this.isLoggedIn = true
             }
+            document.getElementById('accountWrapper').classList.remove('hidden')
 
             loadLikes()
             loadCongestion()
@@ -730,6 +731,7 @@ const app = new Vue({
             console.log(`[error] ${error.message}`);
         };
 
+
     },
     methods: {
 
@@ -778,8 +780,8 @@ const app = new Vue({
                     document.cookie = `name=${encodeURIComponent(getName())}`
 
                     app.mailAddress = getEmail()
-                    app.isLoggedIn = true
                     app.name = getName()
+                    app.isLoggedIn = true
 
                     func()
                 }).catch(err => {
@@ -836,8 +838,8 @@ const setSoldOut = (menuId, isSoldOut, name) => {
             document.cookie = `name=${encodeURIComponent(getName())}`
 
             app.mailAddress = getEmail()
-            app.isLoggedIn = true
             app.name = getName()
+            app.isLoggedIn = true
 
             loadLikes()
 
@@ -895,8 +897,8 @@ function likeThis(menu, toLike) {
             document.cookie = `name=${encodeURIComponent(getName())}`
 
             this.mailAddress = getEmail()
-            this.isLoggedIn = true
             this.name = getName()
+            this.isLoggedIn = true
 
             loadLikes().then(() => {
                 console.log(menu.is_liked, toLike)
