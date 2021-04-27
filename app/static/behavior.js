@@ -899,10 +899,21 @@ const signInRequired = (callback) => {
         callback()
     } else {
         gapi.auth2.getAuthInstance().signIn().then((data) => {
-            document.cookie = `token=${data.getAuthResponse().id_token}`
-            document.cookie = `email=${data.getBasicProfile().getEmail()}`
-            document.cookie = `name=${encodeURIComponent(data.getBasicProfile().getName())}`
-            loadLoginState()
+            let token = data.getAuthResponse().id_token
+            let email = data.getBasicProfile().getEmail()
+            let name = data.getBasicProfile().getName()
+            document.cookie = `token=${token}`
+            document.cookie = `email=${email}`
+            document.cookie = `name=${encodeURIComponent(name)}`
+
+            app.mailAddress = email
+            app.name = name
+            app.isLoggedIn = true
+            let elem = document.getElementById('accountWrapper')
+            if (elem) {
+                elem.classList.remove('hidden')
+            }
+
             callback()
         }).catch(err => {
             alert('Googleログインに失敗しました')
