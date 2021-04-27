@@ -896,9 +896,9 @@ function likeThis(menu, toLike) {
             document.cookie = `email=${getEmail()}`
             document.cookie = `name=${encodeURIComponent(getName())}`
 
-            this.mailAddress = getEmail()
-            this.name = getName()
-            this.isLoggedIn = true
+            app.mailAddress = getEmail()
+            app.name = getName()
+            app.isLoggedIn = true
 
             loadLikes().then(() => {
                 console.log(menu.is_liked, toLike)
