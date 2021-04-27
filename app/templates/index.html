@@ -253,9 +253,9 @@
                 <img class="logo" src="/static/images/ramen.svg">
             </a>
 
-            <div class="ui simple dropdown item right hidden" v-if="isLoggedIn" id="accountWrapper">
-                {{ mailAddress }} <i class="dropdown icon"></i>
-                <div class="menu">
+            <div class="ui simple dropdown item right hidden">
+                <span class="hidden" v-if="isLoggedIn" id="accountWrapper">{{ mailAddress }} <i class="dropdown icon"></i></span>
+                <div class="menu" v-if="isLoggedIn">
                     <span class="item">{{ name }}</span>
                     <span class="item" onclick="signOut()"><i class="red sign-out icon"></i>サインアウト</span>
                 </div>
