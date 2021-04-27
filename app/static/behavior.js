@@ -71,20 +71,7 @@ function isGoogleSignedIn() {
     if (data !== null) {
         return true
     }
-    let isLoggedIn = gapi.auth2.getAuthInstance().isSignedIn.get()
-
-    if (isLoggedIn) {
-        app.mailAddress = getEmail()
-        app.name = getName()
-
-        let elem = document.getElementById('accountWrapper')
-        if (elem) {
-            elem.classList.remove('hidden')
-        }
-        app.isLoggedIn = true
-    }
-
-    return isLoggedIn
+    return gapi.auth2.getAuthInstance().isSignedIn.get()
 }
 
 async function getSpecialMenu(dates) {
@@ -681,6 +668,7 @@ const app = new Vue({
 
         gapi.load('auth2', () => {
             initGoogleAuth()
+            loadLoginState()
             if (isGoogleSignedIn()) {
                 loadLikes()
             }
@@ -749,8 +737,6 @@ const app = new Vue({
                     axios.post('/api/v1/congestion', {
                         congestion: congestion,
                         token: getIdToken()
-                    }).then((response) => {
-
                     }).catch((e) => {
                         if (e.response.status === 429) {
                             alert('リクエストが頻繁過ぎます')
@@ -790,8 +776,6 @@ const setSoldOut = (menuId, isSoldOut, name) => {
                 menu_id: menuId,
                 is_sold_out: isSoldOut,
                 token: getIdToken()
-            }).then((response) => {
-
             }).catch((e) => {
                 if (e.response.status === 429) {
                     alert('リクエストが頻繁過ぎます')
@@ -817,8 +801,6 @@ function likeThis(menu, toLike) {
             axios.post('/api/v1/like', {
                 token: getIdToken(),
                 menu_id: menu.id
-            }).then(res => {
-
             }).catch(() => {
                 menu.is_liked = false
                 menu.like_count--
@@ -832,8 +814,6 @@ function likeThis(menu, toLike) {
                     token: getIdToken(),
                     menu_id: menu.id
                 }
-            }).then(res => {
-
             }).catch(() => {
                 menu.is_liked = true
                 menu.like_count++
@@ -929,25 +909,27 @@ const signOut = () => {
 
 const signIn = (callback) => {
     gapi.auth2.getAuthInstance().signIn().then((data) => {
-        try {
-            document.cookie = `token=${getIdToken()}`
-            document.cookie = `email=${getEmail()}`
-            document.cookie = `name=${encodeURIComponent(getName())}`
-
-            app.mailAddress = getEmail()
-            app.name = getName()
-
-            let elem = document.getElementById('accountWrapper')
-            if (elem) {
-                elem.classList.remove('hidden')
-            }
-            app.isLoggedIn = true
-
-            callback()
-        } catch (error){
-            console.log(error)
-        }
+        loadLoginState()
+        callback()
     }).catch(err => {
         alert('Googleログインに失敗しました')
     });
+}
+
+const loadLoginState = () => {
+
+    if (!isGoogleSignedIn()) return
+
+    document.cookie = `token=${getIdToken()}`
+    document.cookie = `email=${getEmail()}`
+    document.cookie = `name=${encodeURIComponent(getName())}`
+
+    app.mailAddress = getEmail()
+    app.name = getName()
+    app.isLoggedIn = true
+    let elem = document.getElementById('accountWrapper')
+    if (elem) {
+        elem.classList.remove('hidden')
+    }
+
 }
