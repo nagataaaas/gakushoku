@@ -756,10 +756,7 @@ const app = new Vue({
                 }
             }
             if (!isGoogleSignedIn()) {
-
-                if (!signIn(func)) {
-                    alert('Googleログインに失敗しました')
-                }
+                signIn(func)
             } else {
                 func()
             }
@@ -800,9 +797,7 @@ const setSoldOut = (menuId, isSoldOut, name) => {
         }
     }
     if (!isGoogleSignedIn()) {
-        if (!signIn(func)) {
-            alert('Googleログインに失敗しました')
-        }
+        signIn(func)
     } else {
         func()
     }
@@ -842,9 +837,7 @@ function likeThis(menu, toLike) {
         }
     }
     if (!isGoogleSignedIn()) {
-        if (!signIn(func)) {
-            alert('Googleログインに失敗しました')
-        }
+        signIn(func)
     } else {
 
         func()
@@ -941,8 +934,7 @@ const signIn = (callback) => {
         app.isLoggedIn = true
 
         callback()
-        return true
     }).catch(err => {
-        return false
+        alert('Googleログインに失敗しました')
     });
 }
