@@ -902,6 +902,7 @@ const signInRequired = (callback) => {
             document.cookie = `token=${data.getAuthResponse().id_token}`
             document.cookie = `email=${data.getBasicProfile().getEmail()}`
             document.cookie = `name=${encodeURIComponent(data.getBasicProfile().getName())}`
+            loadLoginState()
             callback()
         }).catch(err => {
             alert('Googleログインに失敗しました')
