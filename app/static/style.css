@@ -236,6 +236,24 @@ html {
     transition: opacity 1s;
 }
 
-.hidden{
+.hidden {
     display: none !important;
+}
+
+.ui.inverted.menu .item:before {
+    background: none !important;
+}
+
+.ui.inverted.menu .item:last-child:before {
+    background: rgba(255, 255, 255, .08) !important;
+}
+
+.ui.inverted.menu .item:first-child:after {
+    position: absolute;
+    content: '';
+    top: 0;
+    right: 0;
+    height: 100%;
+    width: 1px;
+    background: rgba(255, 255, 255, .08) !important;
 }
