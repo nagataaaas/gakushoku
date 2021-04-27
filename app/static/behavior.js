@@ -899,6 +899,9 @@ const signInRequired = (callback) => {
         callback()
     } else {
         gapi.auth2.getAuthInstance().signIn().then((data) => {
+            document.cookie = `token=${data.getAuthResponse().id_token}`
+            document.cookie = `email=${data.getBasicProfile().getEmail()}`
+            document.cookie = `name=${encodeURIComponent(data.getBasicProfile().getName())}`
             callback()
         }).catch(err => {
             alert('Googleログインに失敗しました')
