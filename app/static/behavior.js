@@ -673,7 +673,10 @@ const app = new Vue({
                 this.name = getName()
                 this.isLoggedIn = true
             }
-            document.getElementById('accountWrapper').classList.remove('hidden')
+            let elem = document.getElementById('accountWrapper')
+            if (elem) {
+                elem.classList.remove('hidden')
+            }
 
             loadLikes()
             loadCongestion()
@@ -735,26 +738,6 @@ const app = new Vue({
     },
     methods: {
 
-        signOut() {
-            gapi.auth2.getAuthInstance().disconnect()
-
-            document.cookie = `token=; max-age=0`
-            document.cookie = `email=; max-age=0`
-            document.cookie = `name=; max-age=0`
-
-            this.mailAddress = null
-            this.isLoggedIn = false
-            this.name = null
-
-            for (let schedule of this.specialMenus) {
-                schedule.a_menu.is_liked = false
-                schedule.b_menu.is_liked = false
-
-            }
-            for (let menu of this.permanent) {
-                menu.is_liked = false
-            }
-        },
         postCongestion(congestion) {
             const func = () => {
                 if (confirm(`混雑度を ${'小中大'[congestion]} に変更します。\nよろしいですか？`)) {
@@ -773,23 +756,9 @@ const app = new Vue({
                 }
             }
             if (!isGoogleSignedIn()) {
-                let success = true
-                gapi.auth2.getAuthInstance().signIn().then((data) => {
-                    document.cookie = `token=${getIdToken()}`
-                    document.cookie = `email=${getEmail()}`
-                    document.cookie = `name=${encodeURIComponent(getName())}`
 
-                    app.mailAddress = getEmail()
-                    app.name = getName()
-                    app.isLoggedIn = true
-
-                    func()
-                }).catch(err => {
-                    success = false
-                });
-                if (!success) {
+                if (!signIn(func)) {
                     alert('Googleログインに失敗しました')
-                    return
                 }
             } else {
                 func()
@@ -831,25 +800,8 @@ const setSoldOut = (menuId, isSoldOut, name) => {
         }
     }
     if (!isGoogleSignedIn()) {
-        let success = true
-        gapi.auth2.getAuthInstance().signIn().then((data) => {
-            document.cookie = `token=${getIdToken()}`
-            document.cookie = `email=${getEmail()}`
-            document.cookie = `name=${encodeURIComponent(getName())}`
-
-            app.mailAddress = getEmail()
-            app.name = getName()
-            app.isLoggedIn = true
-
-            loadLikes()
-
-            func()
-        }).catch(err => {
-            success = false
-        });
-        if (!success) {
+        if (!signIn(func)) {
             alert('Googleログインに失敗しました')
-            return
         }
     } else {
         func()
@@ -890,30 +842,7 @@ function likeThis(menu, toLike) {
         }
     }
     if (!isGoogleSignedIn()) {
-        let success = true
-        gapi.auth2.getAuthInstance().signIn().then((data) => {
-            document.cookie = `token=${getIdToken()}`
-            document.cookie = `email=${getEmail()}`
-            document.cookie = `name=${encodeURIComponent(getName())}`
-
-            app.mailAddress = getEmail()
-            app.name = getName()
-            app.isLoggedIn = true
-
-            loadLikes().then(() => {
-                console.log(menu.is_liked, toLike)
-                if (menu.is_liked === toLike) {
-                    return
-                }
-                func()
-
-            })
-
-
-        }).catch(err => {
-            success = false
-        });
-        if (!success) {
+        if (!signIn(func)) {
             alert('Googleログインに失敗しました')
         }
     } else {
@@ -977,4 +906,43 @@ const loadCongestion = () => {
 
 const setCongestion = (data) => {
     app.congestion = data.congestion
+}
+
+
+const signOut = () => {
+    gapi.auth2.getAuthInstance().disconnect()
+
+    document.cookie = `token=; max-age=0`
+    document.cookie = `email=; max-age=0`
+    document.cookie = `name=; max-age=0`
+
+    app.mailAddress = null
+    app.isLoggedIn = false
+    app.name = null
+
+    for (let schedule of app.specialMenus) {
+        schedule.a_menu.is_liked = false
+        schedule.b_menu.is_liked = false
+
+    }
+    for (let menu of app.permanent) {
+        menu.is_liked = false
+    }
+}
+
+const signIn = (callback) => {
+    gapi.auth2.getAuthInstance().signIn().then((data) => {
+        document.cookie = `token=${getIdToken()}`
+        document.cookie = `email=${getEmail()}`
+        document.cookie = `name=${encodeURIComponent(getName())}`
+
+        app.mailAddress = getEmail()
+        app.name = getName()
+        app.isLoggedIn = true
+
+        callback()
+        return true
+    }).catch(err => {
+        return false
+    });
 }
