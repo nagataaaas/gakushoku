@@ -671,11 +671,12 @@ const app = new Vue({
             if (isGoogleSignedIn()) {
                 this.mailAddress = getEmail()
                 this.name = getName()
+
+                let elem = document.getElementById('accountWrapper')
+                if (elem) {
+                    elem.classList.remove('hidden')
+                }
                 this.isLoggedIn = true
-            }
-            let elem = document.getElementById('accountWrapper')
-            if (elem) {
-                elem.classList.remove('hidden')
             }
 
             loadLikes()
@@ -931,6 +932,11 @@ const signIn = (callback) => {
 
         app.mailAddress = getEmail()
         app.name = getName()
+
+        let elem = document.getElementById('accountWrapper')
+        if (elem) {
+            elem.classList.remove('hidden')
+        }
         app.isLoggedIn = true
 
         callback()
