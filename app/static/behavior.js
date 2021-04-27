@@ -682,6 +682,7 @@ const app = new Vue({
         gapi.load('auth2', () => {
             initGoogleAuth()
             if (isGoogleSignedIn()) {
+                loadLikes()
             }
             loadCongestion()
         })
@@ -846,6 +847,30 @@ function likeThis(menu, toLike) {
 
         func()
     }
+}
+
+const loadLikes = () => {
+    console.log('loadLike')
+    if (!isGoogleSignedIn()) {
+        console.log('not!')
+        return
+    }
+
+    let token = getIdToken()
+    return axios.get('/api/v1/like/me', {
+        params: {
+            token: token
+        }
+    }).then(res => {
+        let data = res.data
+        for (let schedule of app.specialMenus) {
+            schedule.a_menu.is_liked = data.likes.includes(schedule.a_menu.id)
+            schedule.b_menu.is_liked = data.likes.includes(schedule.b_menu.id)
+        }
+        for (let menu of app.permanent) {
+            menu.is_liked = data.likes.includes(menu.id)
+        }
+    })
 }
 
 const loadCongestion = () => {
