@@ -1,6 +1,5 @@
 window.onload = () => {
-    $('.ui.dropdown')
-        .dropdown();
+    $('.ui.dropdown').dropdown();
 }
 
 let special_wrapper
@@ -746,11 +745,7 @@ const app = new Vue({
                     });
                 }
             }
-            if (!isGoogleSignedIn()) {
-                signIn(func)
-            } else {
-                func()
-            }
+            signInRequired(func)
         },
         nextWalkThrough() {
             this.getNext = new Date()
@@ -785,11 +780,7 @@ const setSoldOut = (menuId, isSoldOut, name) => {
             });
         }
     }
-    if (!isGoogleSignedIn()) {
-        signIn(func)
-    } else {
-        func()
-    }
+    signInRequired(func)
 }
 
 
@@ -821,12 +812,7 @@ function likeThis(menu, toLike) {
             })
         }
     }
-    if (!isGoogleSignedIn()) {
-        signIn(func)
-    } else {
-
-        func()
-    }
+    signInRequired(func)
 }
 
 const loadLikes = () => {
@@ -907,13 +893,17 @@ const signOut = () => {
     }
 }
 
-const signIn = (callback) => {
-    gapi.auth2.getAuthInstance().signIn().then((data) => {
-        loadLoginState()
+const signInRequired = (callback) => {
+    loadLoginState()
+    if (isGoogleSignedIn()) {
         callback()
-    }).catch(err => {
-        alert('Googleログインに失敗しました')
-    });
+    } else {
+        gapi.auth2.getAuthInstance().signIn().then((data) => {
+            callback()
+        }).catch(err => {
+            alert('Googleログインに失敗しました')
+        });
+    }
 }
 
 const loadLoginState = () => {
