@@ -899,9 +899,8 @@ const signInRequired = (callback) => {
         callback()
     } else {
         gapi.auth2.getAuthInstance().signIn().then((data) => {
-            setTimeout(loadLoginState, 500)
-
             callback()
+            loadLoginState()
         }).catch(err => {
             alert('Googleログインに失敗しました')
         });
