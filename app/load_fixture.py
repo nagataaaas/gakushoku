@@ -8,12 +8,13 @@ import random
 
 from app.model import SessionLocal, Menu, Schedule, clear_database, create_database, SoldOut, Like
 
+from typing import List
 
 def uuid_from_text(text: str) -> str:
     return uuid.uuid5(uuid.NAMESPACE_URL, text).hex
 
 
-def load_permanent(permanent_json: list[dict]) -> list[str]:
+def load_permanent(permanent_json: List[dict]) -> List[str]:
     menus = [Menu(id=uuid_from_text(menu['name']), name=menu['name'], price=menu['price'],
                   energy=menu['nutrition']['energy'],
                   protein=menu['nutrition']['protein'], fat=menu['nutrition']['fat'],
@@ -27,7 +28,7 @@ def load_permanent(permanent_json: list[dict]) -> list[str]:
         session.close()
 
 
-def load_special(special_json: dict) -> list[str]:
+def load_special(special_json: dict) -> List[str]:
     menu_dict = {}
     session = SessionLocal()
     for date, value in special_json.items():
@@ -56,7 +57,7 @@ def load_special(special_json: dict) -> list[str]:
         session.close()
 
 
-def load_like(all_sum: int, ids: list[str]):
+def load_like(all_sum: int, ids: List[str]):
     session = SessionLocal()
     for i in range(all_sum):
         session.add(Like(menu=random.choice(ids), by=uuid_from_text(str(i))))
