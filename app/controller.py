@@ -25,6 +25,8 @@ def all_permanent(db: Session) -> PermanentModel:
         .filter(
         ~exists().where(and_(SoldOut.menu == inner_sold_out.menu, inner_sold_out.timestamp > SoldOut.timestamp))) \
         .filter(Menu.is_permanent == True) \
+        .group_by(SoldOut.id)\
+        .group_by(like_query.c.like_count)\
         .all()
 
     for menu, sold_out, like_count in data:
