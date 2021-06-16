@@ -21,7 +21,6 @@ from app.controller import all_permanent, get_special, is_valid_menu_id, set_sol
 from app.model import get_db
 from app.scheme import SoldOutPostRequest, MenuModel, PermanentModel, MyLikesModel, LikePostRequest, \
     CongestionPostRequest, CongestionModel
-from app.utils import decode_google_jwt
 
 app = FastAPI(
     title='Online Database Query Executor',
@@ -78,8 +77,7 @@ async def index(db: Session = Depends(get_db)):
 async def sold_out(req: SoldOutPostRequest, db: Session = Depends(get_db), *, background_tasks: BackgroundTasks):
     if not is_valid_menu_id(req.menu_id, db):
         raise HTTPException(status_code=404, detail=f'menu not found: {req.menu_id}')
-    data = decode_google_jwt(req.token)
-    success = set_sold_out(req.menu_id, req.is_sold_out, data.sub, db)
+    success = set_sold_out(req.menu_id, req.is_sold_out, req.token, db)
     if success:
         background_tasks.add_task(send_sold_out, req.menu_id, req.is_sold_out)
     else:
@@ -88,8 +86,7 @@ async def sold_out(req: SoldOutPostRequest, db: Session = Depends(get_db), *, ba
 
 @app.get('/api/v1/like/me', response_model=MyLikesModel)
 async def like_me(token: str = Query(None), db: Session = Depends(get_db)):
-    data = decode_google_jwt(token)
-    liked = get_likes_by_sub(data.sub, db)
+    liked = get_likes_by_sub(token, db)
 
     json_compatible_item_data = jsonable_encoder(MyLikesModel(likes=liked))
     return JSONResponse(content=json_compatible_item_data)
@@ -97,8 +94,7 @@ async def like_me(token: str = Query(None), db: Session = Depends(get_db)):
 
 @app.post('/api/v1/like')
 async def like_post(req: LikePostRequest, db: Session = Depends(get_db)):
-    data = decode_google_jwt(req.token)
-    success = like_this(req.menu_id, data.sub, db)
+    success = like_this(req.menu_id, req.token, db)
 
     if not success:
         raise HTTPException(409)
@@ -114,11 +110,10 @@ async def get_congestion_api(req: Request, db: Session = Depends(get_db)):
 @app.post('/api/v1/congestion')
 async def set_congestion_api(req: CongestionPostRequest, db: Session = Depends(get_db), *,
                              background_tasks: BackgroundTasks):
-    data = decode_google_jwt(req.token)
     if req.congestion not in (0, 1, 2):
         raise HTTPException(400, f'congestion `{req.congestion}` is invalid')
 
-    success = set_congestion(req.congestion, data.sub, db)
+    success = set_congestion(req.congestion, req.token, db)
     if success:
         background_tasks.add_task(send_congestion, req.congestion)
     else:
@@ -127,8 +122,7 @@ async def set_congestion_api(req: CongestionPostRequest, db: Session = Depends(g
 
 @app.delete('/api/v1/like')
 async def like_me(token: str = Query(None), menu_id: str = Query(None), db: Session = Depends(get_db)):
-    data = decode_google_jwt(token)
-    success = dislike_this(menu_id, data.sub, db)
+    success = dislike_this(menu_id, token, db)
     if not success:
         raise HTTPException(409)
 

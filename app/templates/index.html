@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <title>明石高専学食システム</title>
     <link rel="stylesheet" href="/static/style.css">
-    <meta name="google-signin-client_id"
-          content="1046681300300-2sh30nts0u505ustbjdso43p5gaaph7t.apps.googleusercontent.com">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.2/css/bulma.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
             integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ=="
@@ -254,13 +252,6 @@
             </a>
 
             <div class="ui simple dropdown item right">
-                <span class="hidden" v-if="isLoggedIn" id="accountWrapper">{{ mailAddress }} <i class="dropdown icon"></i></span>
-                <div class="menu">
-                    <span class="item" v-if="isLoggedIn">{{ name }}</span>
-                    <span class="item" onclick="signOut()" v-if="isLoggedIn"><i class="red sign-out icon"></i>サインアウト</span>
-                </div>
-            </div>
-            <div class="ui simple dropdown item right">
                 一覧表示 <i class="dropdown icon"></i>
                 <div class="menu">
                     <span v-bind:class='{item: true, disabled: menu.is_sold_out }' v-for="menu in specialMenus.today"><i
@@ -310,7 +301,6 @@
     </div>
 </div>
 
-<script src="https://apis.google.com/js/platform.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 

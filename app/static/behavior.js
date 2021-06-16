@@ -4,73 +4,38 @@ window.onload = () => {
 
 let special_wrapper
 
-function initGoogleAuth(clientId = '1046681300300-2sh30nts0u505ustbjdso43p5gaaph7t.apps.googleusercontent.com') {
-    gapi.auth2.init({
-        client_id: clientId,
-        scope: 'https://www.googleapis.com/auth/userinfo.email'
-    }).then((data) => {
-    }).catch(err => {
-        console.log(err);
-    });
+function getStorage(key) {
+    return localStorage.getItem(key);
 }
 
-function getCookie(key) {
-    let cookie = document.cookie
-    for (let e of cookie.split(';')) {
-        let data = e.split('=')
-        if (data[0].trim() === key) {
-            return data[1]
-        }
-    }
-    return null
+
+const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+function valid(uuid) {
+    return uuidPattern.test(uuid);
 }
+
+function uuid4() {
+    let temp_url = URL.createObjectURL(new Blob());
+    let uuid = temp_url.toString();
+    URL.revokeObjectURL(temp_url);
+    return uuid.split(/[:\/]/g).pop().toLowerCase(); // remove prefixes
+}
+
+uuid4.valid = valid;
 
 function getIdToken() {
     try {
-        let data = getCookie('token')
+        let data = getStorage('token')
         if (data !== null) {
             return data
         }
-        let user = gapi.auth2.getAuthInstance().currentUser.get();
-        return user.getAuthResponse().id_token
+
+        let uuid = uuid4();
+        localStorage.setItem('token', uuid)
     } catch {
         return null
     }
-}
-
-function getEmail() {
-    try {
-        let data = getCookie('email')
-        if (data !== null) {
-            return data
-        }
-        let user = gapi.auth2.getAuthInstance().currentUser.get();
-        return user.getBasicProfile().getEmail()
-    } catch {
-        return null
-    }
-}
-
-function getName() {
-    try {
-        let data = getCookie('name')
-        if (data !== null) {
-            return decodeURIComponent(data)
-        }
-        let user = gapi.auth2.getAuthInstance().currentUser.get();
-        return user.getBasicProfile().getName()
-    } catch {
-        return null
-    }
-}
-
-function isGoogleSignedIn() {
-
-    let data = getCookie('token')
-    if (data !== null) {
-        return true
-    }
-    return gapi.auth2.getAuthInstance().isSignedIn.get()
 }
 
 async function getSpecialMenu(dates) {
@@ -97,6 +62,60 @@ async function getPermanentMenu() {
 
     return res
 }
+
+
+const loadLikes = () => {
+    console.log('loadLike')
+
+    let token = getIdToken()
+    return axios.get('/api/v1/like/me', {
+        params: {
+            token: token
+        }
+    }).then(res => {
+        let data = res.data
+        for (let schedule of app.specialMenus) {
+            schedule.a_menu.is_liked = data.likes.includes(schedule.a_menu.id)
+            schedule.b_menu.is_liked = data.likes.includes(schedule.b_menu.id)
+        }
+        for (let menu of app.permanent) {
+            menu.is_liked = data.likes.includes(menu.id)
+        }
+    })
+}
+
+const loadCongestion = () => {
+    console.log('loadCongestion')
+
+    return axios.get('/api/v1/congestion'
+    ).then(res => {
+        let data = res.data
+        app.congestion = data.congestion
+
+        setTimeout(() => {
+            $('#congestion-icon-wrapper')
+                .popup({
+                    popup: '#congestion-selector',
+                    position: 'bottom center',
+                    on: 'click',
+                    hideOnScroll: true,
+                    onShow: function () {
+                        $(window)
+                            .one('scroll', function () {
+                                $('#congestion-icon-wrapper').popup('#congestion-selector');
+                            })
+                        ;
+                    }
+                });
+        }, 100)
+
+    })
+}
+
+const setCongestion = (data) => {
+    app.congestion = data.congestion
+}
+
 
 function dateToStruct(date) {
     date = new Date(date)
@@ -636,9 +655,6 @@ const app = new Vue({
         specialMenus: [],
         permanent: [],
         isLoggedIn: false,
-        mailAddress: null,
-        name: null,
-        sub: null,
         socket: null,
         congestion: null,
         needWalkThrough: false,
@@ -648,7 +664,7 @@ const app = new Vue({
     },
     mounted: function () {
         const isTourEnded = () => {
-            let data = getCookie('tour')
+            let data = getStorage('tour')
             return (data !== null)
         }
 
@@ -665,14 +681,8 @@ const app = new Vue({
             }
         }
 
-        gapi.load('auth2', () => {
-            initGoogleAuth()
-            loadLoginState()
-            if (isGoogleSignedIn()) {
-                loadLikes()
-            }
-            loadCongestion()
-        })
+        loadLikes()
+        loadCongestion()
 
         const url = new URL(window.location);
         if (location.protocol.startsWith('https')) {
@@ -731,28 +741,25 @@ const app = new Vue({
     methods: {
 
         postCongestion(congestion) {
-            const func = () => {
-                if (confirm(`混雑度を ${'小中大'[congestion]} に変更します。\nよろしいですか？`)) {
-                    axios.post('/api/v1/congestion', {
-                        congestion: congestion,
-                        token: getIdToken()
-                    }).catch((e) => {
-                        if (e.response.status === 429) {
-                            alert('リクエストが頻繁過ぎます')
-                        } else {
-                            alert('失敗しました')
-                        }
-                    });
-                }
+            if (confirm(`混雑度を ${'小中大'[congestion]} に変更します。\nよろしいですか？`)) {
+                axios.post('/api/v1/congestion', {
+                    congestion: congestion,
+                    token: getIdToken()
+                }).catch((e) => {
+                    if (e.response.status === 429) {
+                        alert('リクエストが頻繁過ぎます')
+                    } else {
+                        alert('失敗しました')
+                    }
+                });
             }
-            signInRequired(func)
         },
         nextWalkThrough() {
             this.getNext = new Date()
             this.walkThroughIndex++
             if (this.walkThroughIndex >= this.walkThroughIndexMax) {
                 this.needWalkThrough = false
-                document.cookie = 'tour=end'
+                localStorage.setItem('tour', 'end')
             }
         },
         previousWalkThrough() {
@@ -765,162 +772,46 @@ const app = new Vue({
 })
 
 const setSoldOut = (menuId, isSoldOut, name) => {
-    const func = () => {
-        if (confirm(`${name}を ${isSoldOut ? '売り切れ' : '販売中'} に変更します。\nよろしいですか？`)) {
-            axios.post('/api/v1/sold-out', {
-                menu_id: menuId,
-                is_sold_out: isSoldOut,
-                token: getIdToken()
-            }).catch((e) => {
-                if (e.response.status === 429) {
-                    alert('リクエストが頻繁過ぎます')
-                } else {
-                    alert('失敗しました')
-                }
-            });
-        }
-    }
-    signInRequired(func)
-}
-
-
-function likeThis(menu, toLike) {
-    const func = () => {
-        if (toLike) {
-            menu.is_liked = true
-            menu.like_count++
-            axios.post('/api/v1/like', {
-                token: getIdToken(),
-                menu_id: menu.id
-            }).catch(() => {
-                menu.is_liked = false
-                menu.like_count--
-                setTimeout(() => alert('スキに失敗しました'), 100)
-            })
-        } else {
-            menu.is_liked = false
-            menu.like_count--
-            axios.delete('/api/v1/like', {
-                params: {
-                    token: getIdToken(),
-                    menu_id: menu.id
-                }
-            }).catch(() => {
-                menu.is_liked = true
-                menu.like_count++
-                setTimeout(() => alert('スキの消去に失敗しました'), 100)
-            })
-        }
-    }
-    signInRequired(func)
-}
-
-const loadLikes = () => {
-    console.log('loadLike')
-    if (!isGoogleSignedIn()) {
-        console.log('not!')
-        return
-    }
-
-    let token = getIdToken()
-    return axios.get('/api/v1/like/me', {
-        params: {
-            token: token
-        }
-    }).then(res => {
-        let data = res.data
-        for (let schedule of app.specialMenus) {
-            schedule.a_menu.is_liked = data.likes.includes(schedule.a_menu.id)
-            schedule.b_menu.is_liked = data.likes.includes(schedule.b_menu.id)
-        }
-        for (let menu of app.permanent) {
-            menu.is_liked = data.likes.includes(menu.id)
-        }
-    })
-}
-
-const loadCongestion = () => {
-    console.log('loadCongestion')
-
-    return axios.get('/api/v1/congestion'
-    ).then(res => {
-        let data = res.data
-        app.congestion = data.congestion
-
-        setTimeout(() => {
-            $('#congestion-icon-wrapper')
-                .popup({
-                    popup: '#congestion-selector',
-                    position: 'bottom center',
-                    on: 'click',
-                    hideOnScroll: true,
-                    onShow: function () {
-                        $(window)
-                            .one('scroll', function () {
-                                $('#congestion-icon-wrapper').popup('#congestion-selector');
-                            })
-                        ;
-                    }
-                });
-        }, 100)
-
-    })
-}
-
-const setCongestion = (data) => {
-    app.congestion = data.congestion
-}
-
-
-const signOut = () => {
-    gapi.auth2.getAuthInstance().disconnect()
-
-    document.cookie = `token=; max-age=0`
-    document.cookie = `email=; max-age=0`
-    document.cookie = `name=; max-age=0`
-
-    app.mailAddress = null
-    app.isLoggedIn = false
-    app.name = null
-
-    for (let schedule of app.specialMenus) {
-        schedule.a_menu.is_liked = false
-        schedule.b_menu.is_liked = false
-
-    }
-    for (let menu of app.permanent) {
-        menu.is_liked = false
-    }
-}
-
-const signInRequired = (callback) => {
-    loadLoginState()
-    if (isGoogleSignedIn()) {
-        callback()
-    } else {
-        gapi.auth2.getAuthInstance().signIn().then((data) => {
-            callback()
-            loadLoginState()
-        }).catch(err => {
-            alert('Googleログインに失敗しました')
+    if (confirm(`${name}を ${isSoldOut ? '売り切れ' : '販売中'} に変更します。\nよろしいですか？`)) {
+        axios.post('/api/v1/sold-out', {
+            menu_id: menuId,
+            is_sold_out: isSoldOut,
+            token: getIdToken()
+        }).catch((e) => {
+            if (e.response.status === 429) {
+                alert('リクエストが頻繁過ぎます')
+            } else {
+                alert('失敗しました')
+            }
         });
     }
 }
 
-const loadLoginState = () => {
 
-    if (!isGoogleSignedIn()) return
-
-    document.cookie = `token=${getIdToken()}`
-    document.cookie = `email=${getEmail()}`
-    document.cookie = `name=${encodeURIComponent(getName())}`
-
-    app.mailAddress = getEmail()
-    app.name = getName()
-    app.isLoggedIn = true
-    let elem = document.getElementById('accountWrapper')
-    if (elem) {
-        elem.classList.remove('hidden')
+function likeThis(menu, toLike) {
+    if (toLike) {
+        menu.is_liked = true
+        menu.like_count++
+        axios.post('/api/v1/like', {
+            token: getIdToken(),
+            menu_id: menu.id
+        }).catch(() => {
+            menu.is_liked = false
+            menu.like_count--
+            setTimeout(() => alert('スキに失敗しました'), 100)
+        })
+    } else {
+        menu.is_liked = false
+        menu.like_count--
+        axios.delete('/api/v1/like', {
+            params: {
+                token: getIdToken(),
+                menu_id: menu.id
+            }
+        }).catch(() => {
+            menu.is_liked = true
+            menu.like_count++
+            setTimeout(() => alert('スキの消去に失敗しました'), 100)
+        })
     }
-
 }
