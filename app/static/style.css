@@ -257,3 +257,7 @@ html {
     width: 1px;
     background: rgba(255, 255, 255, .08) !important;
 }
+
+.table-description{
+    font-weight: 400;
+}

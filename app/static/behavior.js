@@ -199,7 +199,7 @@ Vue.component('special-menus', {
                     <div class="content" v-bind:class="{blurred: special.a_menu.is_sold_out && special.isToday}">
                         <table>
                           <thead>
-                            <tr><th>栄養</th>
+                            <tr><th>栄養<br><small class="table-description">理想量</small></th>
                             <th>相当量</th>
                           </tr></thead>
                           <tbody>
@@ -295,7 +295,7 @@ Vue.component('special-menus', {
                     <div class="content">
                         <table>
                           <thead>
-                            <tr><th>栄養</th>
+                            <tr><th>栄養<br><small class="table-description">理想量</small></th>
                             <th>相当量</th>
                           </tr></thead>
                           <tbody>
