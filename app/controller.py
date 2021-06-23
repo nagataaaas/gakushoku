@@ -1,4 +1,5 @@
 import sys
+
 sys.path.append('./')
 
 from typing import List, Tuple
@@ -25,8 +26,8 @@ def all_permanent(db: Session) -> PermanentModel:
         .filter(
         ~exists().where(and_(SoldOut.menu == inner_sold_out.menu, inner_sold_out.timestamp > SoldOut.timestamp))) \
         .filter(Menu.is_permanent == True) \
-        .group_by(SoldOut.id)\
-        .group_by(like_query.c.like_count)\
+        .group_by(SoldOut.id) \
+        .group_by(like_query.c.like_count) \
         .all()
 
     for menu, sold_out, like_count in data:
@@ -59,6 +60,8 @@ def get_special(dates: List[datetime.date], db: Session) -> ScheduleModel:
                 ~exists().where(
                     and_(SoldOut.menu == inner_sold_out.menu, inner_sold_out.timestamp > SoldOut.timestamp))) \
                 .filter(Menu.id == menu) \
+                .group_by(SoldOut.id) \
+                .group_by(like_query.c.like_count) \
                 .first()
 
             nutrition = NutritionModel(energy=menu.energy, protein=menu.protein, fat=menu.fat, salt=menu.salt)
