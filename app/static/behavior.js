@@ -8,32 +8,25 @@ function getStorage(key) {
     return localStorage.getItem(key);
 }
 
-
-const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-
-function valid(uuid) {
-    return uuidPattern.test(uuid);
-}
-
-function uuid4() {
-    let temp_url = URL.createObjectURL(new Blob());
-    let uuid = temp_url.toString();
-    URL.revokeObjectURL(temp_url);
-    return uuid.split(/[:\/]/g).pop().toLowerCase(); // remove prefixes
-}
-
-uuid4.valid = valid;
+let UserToken;
 
 function getIdToken() {
     try {
         let data = getStorage('token')
         if (data !== null) {
-            return data
+            UserToken = data;
+            return Promise.resolve('Success');
         }
 
-        let uuid = uuid4();
-        localStorage.setItem('token', uuid)
+        return axios.get('/api/v1/create-uuid').then(e => {
+                uuid = e.data.uuid;
+                localStorage.setItem('token', uuid)
+                UserToken = uuid;
+                return uuid
+            }
+        );
     } catch {
+        console.log("get uuid failed")
         return null
     }
 }
@@ -67,21 +60,22 @@ async function getPermanentMenu() {
 const loadLikes = () => {
     console.log('loadLike')
 
-    let token = getIdToken()
-    return axios.get('/api/v1/like/me', {
-        params: {
-            token: token
-        }
-    }).then(res => {
-        let data = res.data
-        for (let schedule of app.specialMenus) {
-            schedule.a_menu.is_liked = data.likes.includes(schedule.a_menu.id)
-            schedule.b_menu.is_liked = data.likes.includes(schedule.b_menu.id)
-        }
-        for (let menu of app.permanent) {
-            menu.is_liked = data.likes.includes(menu.id)
-        }
-    })
+    getIdToken().then(_ => {
+        return axios.get('/api/v1/like/me', {
+            params: {
+                token: UserToken
+            }
+        }).then(res => {
+            let data = res.data
+            for (let schedule of app.specialMenus) {
+                schedule.a_menu.is_liked = data.likes.includes(schedule.a_menu.id)
+                schedule.b_menu.is_liked = data.likes.includes(schedule.b_menu.id)
+            }
+            for (let menu of app.permanent) {
+                menu.is_liked = data.likes.includes(menu.id)
+            }
+        })
+    });
 }
 
 const loadCongestion = () => {
@@ -744,7 +738,7 @@ const app = new Vue({
             if (confirm(`混雑度を ${'小中大'[congestion]} に変更します。\nよろしいですか？`)) {
                 axios.post('/api/v1/congestion', {
                     congestion: congestion,
-                    token: getIdToken()
+                    token: UserToken
                 }).catch((e) => {
                     if (e.response.status === 429) {
                         alert('リクエストが頻繁過ぎます')
@@ -776,7 +770,7 @@ const setSoldOut = (menuId, isSoldOut, name) => {
         axios.post('/api/v1/sold-out', {
             menu_id: menuId,
             is_sold_out: isSoldOut,
-            token: getIdToken()
+            token: UserToken
         }).catch((e) => {
             if (e.response.status === 429) {
                 alert('リクエストが頻繁過ぎます')
@@ -793,7 +787,7 @@ function likeThis(menu, toLike) {
         menu.is_liked = true
         menu.like_count++
         axios.post('/api/v1/like', {
-            token: getIdToken(),
+            token: UserToken,
             menu_id: menu.id
         }).catch(() => {
             menu.is_liked = false
@@ -805,7 +799,7 @@ function likeThis(menu, toLike) {
         menu.like_count--
         axios.delete('/api/v1/like', {
             params: {
-                token: getIdToken(),
+                token: UserToken,
                 menu_id: menu.id
             }
         }).catch(() => {

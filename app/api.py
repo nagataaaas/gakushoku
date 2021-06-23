@@ -4,6 +4,7 @@ sys.path.append('./')
 
 import datetime
 import os
+import uuid
 from typing import List, Dict
 
 from fastapi import Depends, Query
@@ -15,7 +16,7 @@ from sqlalchemy.orm import Session
 from starlette.requests import Request
 from starlette.websockets import WebSocket
 
-from app.config import HTML_DIR, IS_LOCAL
+from app.config import HTML_DIR, IS_LOCAL, NAMESPACE
 from app.controller import all_permanent, get_special, is_valid_menu_id, set_sold_out, get_likes_by_sub, like_this, \
     dislike_this, get_congestion, set_congestion
 from app.model import get_db
@@ -105,6 +106,13 @@ async def get_congestion_api(req: Request, db: Session = Depends(get_db)):
     congestion = get_congestion(db)
 
     return CongestionModel(congestion=congestion)
+
+
+@app.get('/api/v1/create-uuid')
+def create_uuid(request: Request):
+    client_host = request.client.host
+
+    return {'uuid': uuid.uuid5(NAMESPACE, client_host).hex}
 
 
 @app.post('/api/v1/congestion')
