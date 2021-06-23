@@ -1,4 +1,5 @@
 import sys
+
 sys.path.append('./')
 
 import json
@@ -9,6 +10,7 @@ import random
 from app.model import SessionLocal, Menu, Schedule, clear_database, create_database, SoldOut, Like
 
 from typing import List
+
 
 def uuid_from_text(text: str) -> str:
     return uuid.uuid5(uuid.NAMESPACE_URL, text).hex
@@ -31,8 +33,12 @@ def load_permanent(permanent_json: List[dict]) -> List[str]:
 def load_special(special_json: dict) -> List[str]:
     menu_dict = {}
     session = SessionLocal()
+    this_month = datetime.datetime.now().strftime("-%m-")
     for date, value in special_json.items():
-        schedule = Schedule(date=datetime.datetime.fromisoformat(date).date())
+        try:
+            schedule = Schedule(date=datetime.datetime.fromisoformat(date.replace('-04-', this_month)).date())
+        except:
+            continue
         if value['A']['name'] not in menu_dict:
             menu = Menu(id=uuid_from_text(value['A']['name']), name=value['A']['name'], price=380,
                         energy=value['A']['nutrition']['energy'],
@@ -76,7 +82,7 @@ def main():
     ps = load_permanent(permanent_json)
     ls = load_special(special_json)
 
-    load_like(400, ps+ls)
+    load_like(400, ps + ls)
 
     session = SessionLocal()
     session.add(SoldOut(menu=ps[0], timestamp=datetime.datetime.now(), is_sold_out=True))
