@@ -3,10 +3,10 @@
 School project
 
 # Showcase
-<div style="display: flex; flex-direction: row;">
+<div style="display: flex; flex-direction: row; ">
 
-![](assets/special.png)
-![](assets/permanent.png)
+<img src="assets/special.png" style="width: 40%;">
+<img src="assets/permanent.png" style="width: 40%;">
 
 </div>
 
