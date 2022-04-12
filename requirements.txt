@@ -6,4 +6,3 @@ cryptography
 uvicorn
 websocket-client
 pytest
-fast-ulid

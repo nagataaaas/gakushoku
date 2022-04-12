@@ -12,11 +12,11 @@ from sqlalchemy.orm import Session
 from starlette.requests import Request
 from starlette.websockets import WebSocket
 
-from app.config import HTML_DIR, IS_LOCAL, NAMESPACE
-from app.controller import all_permanent, get_special, is_valid_menu_id, set_sold_out, get_likes_by_sub, like_this, \
+from config import HTML_DIR, IS_LOCAL, NAMESPACE, IS_SSL
+from controller import all_permanent, get_special, is_valid_menu_id, set_sold_out, get_likes_by_sub, like_this, \
     dislike_this, get_congestion, set_congestion
-from app.model import get_db
-from app.scheme import SoldOutPostRequest, MenuModel, PermanentModel, MyLikesModel, LikePostRequest, \
+from model import get_db
+from scheme import SoldOutPostRequest, MenuModel, PermanentModel, MyLikesModel, LikePostRequest, \
     CongestionPostRequest, CongestionModel
 
 app = FastAPI(
@@ -29,7 +29,7 @@ app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
 @app.middleware("http")
 async def add_process_time_header(request: Request, call_next):
-    if not request.url.is_secure and not IS_LOCAL:
+    if not request.url.is_secure and not IS_LOCAL and IS_SSL:
         if request.url.scheme == 'http':
             return RedirectResponse(url=str(request.url).replace('http', 'https', 1))
         elif request.url.scheme == 'ws':
@@ -145,17 +145,23 @@ async def send_sold_out(menu_id: str, is_sold_out: bool):
 
 async def send_congestion(congestion: int):
     for client in clients.values():
-        await client.send_json({'congestion': congestion, 'method': 'congestion'})
+        try:
+            await client.send_json({'congestion': congestion, 'method': 'congestion'})
+        except RuntimeError:
+            import traceback
+            traceback.print_exc()  # disconnected
 
 
 @app.websocket("/api/v1/ws")
 async def websocket_endpoint(ws: WebSocket):
     await ws.accept()
     key = ws.headers.get('sec-websocket-key')
+    print(key, 'connected')
     clients[key] = ws
     try:
         while True:
             await ws.receive_text()
     except:
+        print(key, 'disconnected')
         await ws.close()
         del clients[key]

@@ -2,7 +2,7 @@ import datetime
 import json
 import random
 
-from app.model import Menu
+from model import Menu
 
 
 def special_menu() -> dict[datetime.date, dict[str, Menu]]:
@@ -69,7 +69,7 @@ def special_menu() -> dict[datetime.date, dict[str, Menu]]:
 
 def permanent_menu() -> list[Menu]:
     menu = []
-    with open('app/fixture/permanent.json', 'r', encoding='utf-8') as f:
+    with open('app/permanent.json', 'r', encoding='utf-8') as f:
         for dish in json.load(f):
             menu.append(Menu(name=dish['name'], price=dish['price'], **dish['nutrition'], is_permanent=True))
     return menu

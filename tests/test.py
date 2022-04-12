@@ -5,7 +5,7 @@ import app.controller as controller
 import app.scheme as scheme
 from app.api import app
 from app.config import MAX_SOLD_OUT_POST_PER_DAY, MAX_CONGESTION_POST_PER_DAY
-from app.fixture.create_data import (permanent_menu, special_menu)
+from app.fixture import (permanent_menu, special_menu)
 from app.load_fixture import (create_database, clear_database, load_special, load_permanent)
 from app.model import SessionLocal
 

@@ -1,6 +1,6 @@
 import datetime
 
-import fast_ulid
+import uuid
 from sqlalchemy import Column, String, Integer, Float, Date, Boolean, ForeignKey, DateTime
 from sqlalchemy import MetaData
 from sqlalchemy import create_engine
@@ -8,12 +8,12 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import Session
 
-import app.config
+import config
 
 meta = MetaData()
 
 engine = create_engine(
-    app.config.DATABASE_URI, connect_args={"check_same_thread": False}
+    config.DATABASE_URI, connect_args={"check_same_thread": False}
 )
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
@@ -47,7 +47,7 @@ def get_db() -> Session:
 class Menu(Base):
     __tablename__ = 'menu_table'
 
-    id = Column(String, primary_key=True, default=fast_ulid.ulid)
+    id = Column(String, primary_key=True, default=lambda: uuid.uuid4().hex)
 
     name = Column(String, nullable=False)
     price = Column(Integer, nullable=False)
@@ -66,7 +66,7 @@ class Menu(Base):
 class Like(Base):
     __tablename__ = 'like_table'
 
-    id = Column(String, primary_key=True, default=fast_ulid.ulid)
+    id = Column(String, primary_key=True, default=lambda: uuid.uuid4().hex)
 
     menu = Column(String, ForeignKey(Menu.id, name="fk_menu_00"))
     by = Column(String, nullable=False, index=True)
@@ -78,7 +78,7 @@ class Like(Base):
 class Schedule(Base):
     __tablename__ = 'schedule_table'
 
-    id = Column(String, primary_key=True, default=fast_ulid.ulid)
+    id = Column(String, primary_key=True, default=lambda: uuid.uuid4().hex)
 
     date = Column(Date, index=True, nullable=False, default=datetime.date.today())
     a_menu = Column(String, ForeignKey(Menu.id, name="fk_menu_a"))
@@ -91,7 +91,7 @@ class Schedule(Base):
 class SoldOut(Base):
     __tablename__ = 'sold_out_table'
 
-    id = Column(String, primary_key=True, default=fast_ulid.ulid)
+    id = Column(String, primary_key=True, default=lambda: uuid.uuid4().hex)
     menu = Column(String, ForeignKey(Menu.id, name="fk_menu_00"))
     timestamp = Column(DateTime, default=datetime.datetime.now)
     by = Column(String)
@@ -105,7 +105,7 @@ class SoldOut(Base):
 class Congestion(Base):
     __tablename__ = 'congestion_table'
 
-    id = Column(String, primary_key=True, default=fast_ulid.ulid)
+    id = Column(String, primary_key=True, default=lambda: uuid.uuid4().hex)
     congestion = Column(Integer, nullable=False)
     # 0: vacant
     # 1: middle
