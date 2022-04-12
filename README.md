@@ -3,7 +3,7 @@
 School project
 
 # Showcase
-<div style="display: flex; flex-direction: row; ">
+<div style="display: flex; flex-direction: row; justify-content: space-around;">
 
 <img src="assets/special.png" style="width: 40%;">
 <img src="assets/permanent.png" style="width: 40%;">
