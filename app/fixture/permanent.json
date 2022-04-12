@@ -1,1 +1,102 @@
-[{"name": "カレーライス", "price": 250, "nutrition": {"energy": 596, "protein": 11.4, "fat": 10.5, "salt": 3.6}}, {"name": "カツカレー", "price": 330, "nutrition": {"energy": 832, "protein": 19.3, "fat": 17.6, "salt": 3.6}}, {"name": "親子丼", "price": 280, "nutrition": {"energy": 698, "protein": 27.6, "fat": 23.6, "salt": 3.3}}, {"name": "カツ丼", "price": 280, "nutrition": {"energy": 944, "protein": 15.6, "fat": 36.6, "salt": 3.9}}, {"name": "カレーうどん", "price": 290, "nutrition": {"energy": 650, "protein": 27.7, "fat": 25.7, "salt": 5.6}}, {"name": "塩ラーメン", "price": 210, "nutrition": {"energy": 401, "protein": 16.5, "fat": 2.4, "salt": 7.1}}, {"name": "かけうどん", "price": 160, "nutrition": {"energy": 325, "protein": 10.4, "fat": 2.0, "salt": 4.1}}, {"name": "かけそば", "price": 160, "nutrition": {"energy": 320, "protein": 13.3, "fat": 1.8, "salt": 4.1}}, {"name": "チャーハン", "price": 200, "nutrition": {"energy": 558, "protein": 14.3, "fat": 9.9, "salt": 3.4}}, {"name": "ライス(210g)", "price": 100, "nutrition": {"energy": 386, "protein": 5.8, "fat": 0.7, "salt": 0.0}}]
+[
+  {
+    "name": "カレーライス",
+    "price": 250,
+    "nutrition": {
+      "energy": 596,
+      "protein": 11.4,
+      "fat": 10.5,
+      "salt": 3.6
+    }
+  },
+  {
+    "name": "カツカレー",
+    "price": 330,
+    "nutrition": {
+      "energy": 832,
+      "protein": 19.3,
+      "fat": 17.6,
+      "salt": 3.6
+    }
+  },
+  {
+    "name": "親子丼",
+    "price": 280,
+    "nutrition": {
+      "energy": 698,
+      "protein": 27.6,
+      "fat": 23.6,
+      "salt": 3.3
+    }
+  },
+  {
+    "name": "カツ丼",
+    "price": 280,
+    "nutrition": {
+      "energy": 944,
+      "protein": 15.6,
+      "fat": 36.6,
+      "salt": 3.9
+    }
+  },
+  {
+    "name": "カレーうどん",
+    "price": 290,
+    "nutrition": {
+      "energy": 650,
+      "protein": 27.7,
+      "fat": 25.7,
+      "salt": 5.6
+    }
+  },
+  {
+    "name": "塩ラーメン",
+    "price": 210,
+    "nutrition": {
+      "energy": 401,
+      "protein": 16.5,
+      "fat": 2.4,
+      "salt": 7.1
+    }
+  },
+  {
+    "name": "かけうどん",
+    "price": 160,
+    "nutrition": {
+      "energy": 325,
+      "protein": 10.4,
+      "fat": 2.0,
+      "salt": 4.1
+    }
+  },
+  {
+    "name": "かけそば",
+    "price": 160,
+    "nutrition": {
+      "energy": 320,
+      "protein": 13.3,
+      "fat": 1.8,
+      "salt": 4.1
+    }
+  },
+  {
+    "name": "チャーハン",
+    "price": 200,
+    "nutrition": {
+      "energy": 558,
+      "protein": 14.3,
+      "fat": 9.9,
+      "salt": 3.4
+    }
+  },
+  {
+    "name": "ライス(210g)",
+    "price": 100,
+    "nutrition": {
+      "energy": 386,
+      "protein": 5.8,
+      "fat": 0.7,
+      "salt": 0.0
+    }
+  }
+]

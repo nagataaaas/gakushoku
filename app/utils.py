@@ -1,4 +1,3 @@
-import uuid
 import datetime
 from dataclasses import dataclass
 
@@ -26,6 +25,3 @@ class GoogleJwtData:
     exp_date: datetime.datetime = None
     is_expired: bool = False
 
-
-def random_uuid() -> str:
-    return uuid.uuid4().hex

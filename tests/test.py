@@ -14,6 +14,7 @@ from app.api import app
 from app.config import MAX_SOLD_OUT_POST_PER_DAY, MAX_CONGESTION_POST_PER_DAY
 from app.load_fixture import (create_database, clear_database, load_special, load_permanent)
 from app.model import SessionLocal
+from app.fixture.create_data import (permanent_menu, special_menu)
 
 
 class TestController:
@@ -24,13 +25,11 @@ class TestController:
 
         clear_database()
         create_database()
-        with open('app/fixture/permanent.json', 'r', encoding='utf-8') as f:
-            permanent_json = json.load(f)
-        with open('app/fixture/special.json', 'r', encoding='utf-8') as f:
-            special_json = json.load(f)
+        permanent_data = permanent_menu()
+        special_data = special_menu()
 
-        ps = load_permanent(permanent_json)
-        ls = load_special(special_json)
+        ps = load_permanent(permanent_data)
+        ls = load_special(special_data)
 
         # load_like(400, ps + ls)
 
@@ -58,7 +57,7 @@ class TestController:
         assert specials.schedules[0].a_menu.name == "春野菜の塩あんかけ皿うどん"
         assert specials.schedules[0].a_menu.price == 380
         assert specials.schedules[0].a_menu.like_count == 0
-        assert specials.schedules[0].a_menu.is_sold_out == False
+        assert specials.schedules[0].a_menu.is_sold_out is False
 
     def test_get_specials(self):
         specials = controller.get_special([datetime.date(2021, 4, 14), datetime.date(2021, 4, 15)], self.db)

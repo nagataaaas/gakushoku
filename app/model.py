@@ -14,6 +14,8 @@ from sqlalchemy.orm.session import Session
 import app.config
 import app.utils
 
+import fast_ulid
+
 meta = MetaData()
 
 engine = create_engine(
@@ -51,7 +53,7 @@ def get_db() -> Session:
 class Menu(Base):
     __tablename__ = 'menu_table'
 
-    id = Column(String, primary_key=True, default=app.utils.random_uuid)
+    id = Column(String, primary_key=True, default=fast_ulid.ulid)
 
     name = Column(String, nullable=False)
     price = Column(Integer, nullable=False)
@@ -70,7 +72,7 @@ class Menu(Base):
 class Like(Base):
     __tablename__ = 'like_table'
 
-    id = Column(String, primary_key=True, default=app.utils.random_uuid)
+    id = Column(String, primary_key=True, default=fast_ulid.ulid)
 
     menu = Column(String, ForeignKey(Menu.id, name="fk_menu_00"))
     by = Column(String, nullable=False, index=True)
@@ -82,7 +84,7 @@ class Like(Base):
 class Schedule(Base):
     __tablename__ = 'schedule_table'
 
-    id = Column(String, primary_key=True, default=app.utils.random_uuid)
+    id = Column(String, primary_key=True, default=fast_ulid.ulid)
 
     date = Column(Date, index=True, nullable=False, default=datetime.date.today())
     a_menu = Column(String, ForeignKey(Menu.id, name="fk_menu_a"))
@@ -95,7 +97,7 @@ class Schedule(Base):
 class SoldOut(Base):
     __tablename__ = 'sold_out_table'
 
-    id = Column(String, primary_key=True, default=app.utils.random_uuid)
+    id = Column(String, primary_key=True, default=fast_ulid.ulid)
     menu = Column(String, ForeignKey(Menu.id, name="fk_menu_00"))
     timestamp = Column(DateTime, default=datetime.datetime.now)
     by = Column(String)
@@ -109,7 +111,7 @@ class SoldOut(Base):
 class Congestion(Base):
     __tablename__ = 'congestion_table'
 
-    id = Column(String, primary_key=True, default=app.utils.random_uuid)
+    id = Column(String, primary_key=True, default=fast_ulid.ulid)
     congestion = Column(Integer, nullable=False)
     # 0: vacant
     # 1: middle

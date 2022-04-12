@@ -11,54 +11,40 @@ from app.model import SessionLocal, Menu, Schedule, clear_database, create_datab
 
 from typing import List
 
+from app.fixture.create_data import special_menu, permanent_menu
+
 
 def uuid_from_text(text: str) -> str:
     return uuid.uuid5(uuid.NAMESPACE_URL, text).hex
 
 
-def load_permanent(permanent_json: List[dict]) -> List[str]:
-    menus = [Menu(id=uuid_from_text(menu['name']), name=menu['name'], price=menu['price'],
-                  energy=menu['nutrition']['energy'],
-                  protein=menu['nutrition']['protein'], fat=menu['nutrition']['fat'],
-                  salt=menu['nutrition']['salt'], is_permanent=True) for menu in permanent_json]
+def load_permanent(permanent_data: List[Menu]) -> List[str]:
     session = SessionLocal()
-    session.add_all(menus)
+    for menu in permanent_data:
+        menu.id = uuid_from_text(menu.name)
+    session.add_all(permanent_data)
     session.commit()
     try:
-        return [menu.id for menu in menus]
+        return [menu.id for menu in permanent_data]
     finally:
         session.close()
 
 
-def load_special(special_json: dict) -> List[str]:
-    menu_dict = {}
+def load_special(special_data: dict):
+    menu_dict = set()
     session = SessionLocal()
-    this_month = datetime.datetime.now().strftime("-%m-")
-    for date, value in special_json.items():
-        try:
-            schedule = Schedule(date=datetime.datetime.fromisoformat(date.replace('-04-', this_month)).date())
-        except:
-            continue
-        if value['A']['name'] not in menu_dict:
-            menu = Menu(id=uuid_from_text(value['A']['name']), name=value['A']['name'], price=380,
-                        energy=value['A']['nutrition']['energy'],
-                        protein=value['A']['nutrition']['protein'], fat=value['A']['nutrition']['fat'],
-                        salt=value['A']['nutrition']['salt'], is_permanent=False)
-            session.add(menu)
-            menu_dict[value['A']['name']] = menu.id
-        schedule.a_menu = menu_dict[value['A']['name']]
-        if value['B']['name'] not in menu_dict:
-            menu = Menu(id=uuid_from_text(value['B']['name']), name=value['B']['name'], price=320,
-                        energy=value['B']['nutrition']['energy'],
-                        protein=value['B']['nutrition']['protein'], fat=value['B']['nutrition']['fat'],
-                        salt=value['B']['nutrition']['salt'], is_permanent=False)
-            session.add(menu)
-            menu_dict[value['B']['name']] = menu.id
-        schedule.b_menu = menu_dict[value['B']['name']]
+    for date, menu in special_data.items():
+        schedule = Schedule(date=date)
+        session.add_all([menu['A'], menu['B']])
+        session.commit()
+        schedule.a_menu = menu['A'].id
+        schedule.b_menu = menu['B'].id
+        menu_dict.add(menu['A'].id)
+        menu_dict.add(menu['B'].id)
         session.add(schedule)
     session.commit()
     try:
-        return list(menu_dict.values())
+        return list(menu_dict)
     finally:
         session.close()
 
@@ -74,13 +60,12 @@ def load_like(all_sum: int, ids: List[str]):
 def main():
     clear_database()
     create_database()
-    with open('app/fixture/permanent.json', 'r', encoding='utf-8') as f:
-        permanent_json = json.load(f)
-    with open('app/fixture/special.json', 'r', encoding='utf-8') as f:
-        special_json = json.load(f)
 
-    ps = load_permanent(permanent_json)
-    ls = load_special(special_json)
+    permanent_data = permanent_menu()
+    special_data = special_menu()
+
+    ps = load_permanent(permanent_data)
+    ls = load_special(special_data)
 
     load_like(400, ps + ls)
 
