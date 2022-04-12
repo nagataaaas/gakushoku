@@ -1,9 +1,6 @@
-import sys
-sys.path.append('./')
-
 import datetime
-import logging
 
+import fast_ulid
 from sqlalchemy import Column, String, Integer, Float, Date, Boolean, ForeignKey, DateTime
 from sqlalchemy import MetaData
 from sqlalchemy import create_engine
@@ -12,9 +9,6 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import Session
 
 import app.config
-import app.utils
-
-import fast_ulid
 
 meta = MetaData()
 

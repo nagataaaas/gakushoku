@@ -1,6 +1,6 @@
+from typing import List
+
 from pydantic import BaseModel
-from typing import List, Dict, Optional, Any
-from fastapi import Query
 
 
 class NutritionModel(BaseModel):
@@ -55,6 +55,7 @@ class MyLikesModel(BaseModel):
 class CongestionPostRequest(BaseModel):
     congestion: int
     token: str
+
 
 class CongestionModel(BaseModel):
     congestion: int

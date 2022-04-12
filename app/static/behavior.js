@@ -494,7 +494,6 @@ Vue.component('special-menus', {
         let start = null
 
         const scrollTo = (index, direction) => {
-            console.log([index, direction])
             if (direction === 'right' && this.canMoveRight) {
                 from = special_wrapper.scrollLeft
                 to = (index + 1) * 0.8 * window.innerWidth

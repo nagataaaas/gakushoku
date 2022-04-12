@@ -1,17 +1,10 @@
-import sys
-
-sys.path.append('./')
-
-import json
 import datetime
-import uuid
 import random
-
-from app.model import SessionLocal, Menu, Schedule, clear_database, create_database, SoldOut, Like
-
+import uuid
 from typing import List
 
 from app.fixture.create_data import special_menu, permanent_menu
+from app.model import SessionLocal, Menu, Schedule, clear_database, create_database, SoldOut, Like
 
 
 def uuid_from_text(text: str) -> str:

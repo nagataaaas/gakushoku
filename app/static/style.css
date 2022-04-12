@@ -240,6 +240,10 @@ html {
     display: none !important;
 }
 
+div.item, div.menu-card.ui.card{
+    transition: 0.3s;
+}
+
 .ui.inverted.menu .item:before {
     background: none !important;
 }
@@ -261,6 +265,7 @@ html {
 .table-description{
     font-weight: 400;
 }
+
 div.ui.red.button > i.heart{
     animation-iteration-count: 1;
     animation: pimp 0.5s;

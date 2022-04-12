@@ -1,17 +1,13 @@
-import sys
-
-sys.path.append('./')
-
-from typing import List, Tuple
-from app.model import Menu, Schedule, SoldOut, Like, Congestion
-from app.scheme import MenuModel, NutritionModel, ScheduleModel, DayMenuModel, PermanentModel
-
-from sqlalchemy.orm import Session
-from sqlalchemy import func, exists, and_
-from sqlalchemy.orm import aliased
 import datetime
+from typing import List, Tuple
+
+from sqlalchemy import func, exists, and_
+from sqlalchemy.orm import Session
+from sqlalchemy.orm import aliased
 
 from app.config import MAX_SOLD_OUT_POST_PER_DAY, MAX_CONGESTION_POST_PER_DAY
+from app.model import Menu, Schedule, SoldOut, Like, Congestion
+from app.scheme import MenuModel, NutritionModel, ScheduleModel, DayMenuModel, PermanentModel
 
 
 def all_permanent(db: Session) -> PermanentModel:

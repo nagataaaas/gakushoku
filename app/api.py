@@ -1,7 +1,3 @@
-import sys
-
-sys.path.append('./')
-
 import datetime
 import os
 import uuid
@@ -140,7 +136,11 @@ clients: Dict[str, WebSocket] = {}
 
 async def send_sold_out(menu_id: str, is_sold_out: bool):
     for client in clients.values():
-        await client.send_json({'id': menu_id, 'is_sold_out': is_sold_out, 'method': 'sold_out'})
+        try:
+            await client.send_json({'id': menu_id, 'is_sold_out': is_sold_out, 'method': 'sold_out'})
+        except RuntimeError:
+            import traceback
+            traceback.print_exc()  # disconnected
 
 
 async def send_congestion(congestion: int):

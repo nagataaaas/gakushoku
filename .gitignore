@@ -2,3 +2,4 @@ venv
 .idea
 assets
 database.db
+.vscode
