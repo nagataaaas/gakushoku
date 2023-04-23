@@ -4,10 +4,18 @@ School project
 
 # Showcase
 <div style="display: flex; flex-direction: row; justify-content: space-around;">
+<img src="https://user-images.githubusercontent.com/32694778/233828289-4e625071-7a38-4606-a5fd-08dee4ec57ac.png" style="width: 40%;">
+<img src="https://user-images.githubusercontent.com/32694778/233828307-321565ce-75f9-4b12-a9b2-02a0dec32aa4.png" style="width: 40%;">
+</div>
 
+<div style="display: flex; flex-direction: row; justify-content: space-around;">
+<img src="https://user-images.githubusercontent.com/32694778/233828319-7c49c857-ef50-4e15-8da5-87dded5f14d2.png" style="width: 40%;">
+<img src="https://user-images.githubusercontent.com/32694778/233828326-bd0fd3f3-685b-4c71-8610-4f475d171e37.png" style="width: 40%;">
+</div>
+
+<div style="display: flex; flex-direction: row; justify-content: space-around;">
 <img src="assets/special.png" style="width: 40%;">
 <img src="assets/permanent.png" style="width: 40%;">
-
 </div>
 
 ![](assets/walkthru.gif)
